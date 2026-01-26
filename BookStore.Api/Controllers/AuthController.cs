@@ -8,7 +8,7 @@ namespace BookStore.Api.Controllers;
 public class AuthController(IAuthService authService) : BaseController
 {
     [HttpPost("/login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken ct)
     {
         try
         {

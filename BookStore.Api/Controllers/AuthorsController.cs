@@ -1,4 +1,5 @@
 using BookStore.Api.Common;
+using BookStore.Application.Common;
 using BookStore.Application.DTOs;
 using BookStore.Application.Interfaces;
 using BookStore.Domain.Entities;
@@ -19,8 +20,10 @@ public class AuthorsController(IAuthorService authorService) : BaseController
     
     [HttpGet]
     [Authorize(Roles = "Admin")]
-    public ActionResult<List<Author>> GetAuthors()
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResponse<PaginatedList<AuthorDto>>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiResponse<object>))]
+    public async Task<IActionResult> GetAuthors([FromQuery] PaginatedRequest request)
     {
-        return Ok(authorService.GetAuthors());
+        return Ok(await authorService.GetAuthors(request));
     }
 }

@@ -1,6 +1,7 @@
 using BookStore.Application.DTOs;
 using BookStore.Application.Interfaces;
 using BookStore.Domain.Entities;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Application.Services;
@@ -24,12 +25,13 @@ public class BookService(IBookStoreDbContext dbContext) : IBookService
         var books = dbContext.Books
             .AsNoTracking()
             .Include(b => b.Author)
-            .Select(b => new BookDto()
-            {
-                Id = b.Id,
-                Title = b.Title,
-                Author = new AuthorDto(){Name = b.Author.Name, Id = b.Author.Id }
-            })
+            // .Select(b => new BookDto()
+            // {
+            //     Id = b.Id,
+            //     Title = b.Title,
+            //     Author = new AuthorDto(){Name = b.Author.Name, Id = b.Author.Id }
+            // })
+            .ProjectToType<BookDto>()
             .ToList();
         return books;
     }

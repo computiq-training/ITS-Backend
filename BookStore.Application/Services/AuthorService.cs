@@ -1,6 +1,8 @@
+using BookStore.Application.Common;
 using BookStore.Application.DTOs;
 using BookStore.Application.Interfaces;
 using BookStore.Domain.Entities;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Application.Services;
@@ -19,14 +21,19 @@ public class AuthorService(IBookStoreDbContext dbContext) : IAuthorService
         return newAuthor;
     }
 
-    public List<AuthorDto> GetAuthors()
+    public Task<PaginatedList<AuthorDto>> GetAuthors(PaginatedRequest request)
     {
-        return dbContext.Authors
-            .Select(author => new AuthorDto()
-            {
-                Name = author.Name,
-                Id = author.Id
-            })
-            .ToList();
+        var query =  dbContext.Authors
+            .OrderBy(a => a.Id)
+            // .Select(author => new AuthorDto()
+            // {
+            //     Name = author.Name,
+            //     Id = author.Id
+            // })
+            .ProjectToType<AuthorDto>();
+        var test = query.Single();
+        var result = PaginatedList<AuthorDto>.CreateAsync(query, request.PageNumber, request.PageSize);
+        return result;
+        
     }
 }
